@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Темы по олимпиадному программированию</title>
+
+  <style>
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: #222;
+      margin-bottom: 25px;
+    }
+
+    ul {
+
+      list-style-type: none;
+
+      padding: 0;
+
+      max-width: 600px;
+
+      width: 100%;
+
+    }
+
+    li {
+
+      background-color: white;
+
+      margin-bottom: 12px;
+
+      border-radius: 8px;
+
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+      padding: 15px 20px;
+
+      font-size: 1.2rem;
+
+      transition: background-color 0.3s ease;
+
+    }
+
+    li:hover {
+
+      background-color: #e0e7ff;
+
+    }
+
+    a {
+
+      text-decoration: none;
+
+      color: #3b49df;
+
+      font-weight: bold;
+
+      display: block;
+
+    }
+
+    a:hover {
+
+      text-decoration: underline;
+
+    }
+
+    @media (max-width: 600px) {
+
+      body {
+
+        padding: 10px;
+
+      }
+
+      li {
+
+        font-size: 1rem;
+
+        padding: 12px 15px;
+
+      }
+
+      ul {
+
+        max-width: 100%;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+  <h1>Темы</h1>
+  <ul>
+    {% for topic in topics %}
+      <li><a href="{% url 'topic_detail' topic.slug %}">{{ topic.title }}</a></li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
