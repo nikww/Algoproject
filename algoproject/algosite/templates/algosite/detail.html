@@ -1,499 +1,251 @@
 <!DOCTYPE html>
-
 <html lang="ru">
-
 <head>
-
   <meta charset="UTF-8" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <title>{{ topic.title }}</title>
-
   <style>
-
     body {
-
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
       background: #f9fafb;
-
       margin: 0;
-
       padding: 20px;
-
       max-width: 900px;
-
       margin-left: auto;
-
       margin-right: auto;
-
     }
-
     h1 {
-
       color: #2d3748;
-
       text-align: center;
-
     }
-
     .content {
-
       margin-top: 20px;
-
       background: white;
-
       padding: 20px;
-
       border-radius: 10px;
-
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-
       font-size: 1.1rem;
-
       line-height: 1.6;
-
       color: #333;
-
     }
-
     pre {
-
       background: #1e1e1e;
-
       color: #d4d4d4;
-
       padding: 15px;
-
       border-radius: 8px;
-
       font-family: 'Source Code Pro', monospace;
-
       font-size: 0.9rem;
-
       overflow-x: auto;
-
       white-space: pre-wrap;
-
       word-break: break-word;
-
       margin-top: 20px;
-
     }
-
     a.back-link {
-
       display: inline-block;
-
       margin-top: 20px;
-
       color: #3b49df;
-
       text-decoration: none;
-
       font-weight: 600;
-
       font-size: 1rem;
-
     }
-
     a.back-link:hover {
-
       text-decoration: underline;
-
     }
-
     .exercise {
-
       margin-top: 40px;
-
       padding: 20px;
-
       background: #e8f0fe;
-
       border-radius: 10px;
-
       box-shadow: 0 3px 12px rgba(59, 73, 223, 0.15);
-
     }
-
     .exercise label {
-
       font-weight: 600;
-
       display: block;
-
       margin-bottom: 6px;
-
       font-size: 1rem;
-
       color: #2d3748;
-
     }
-
     .exercise input[type="number"] {
-
       padding: 8px 10px;
-
       font-size: 1rem;
-
       border: 1px solid #cbd5e0;
-
       border-radius: 6px;
-
       width: 100px;
-
       margin-right: 10px;
-
     }
-
     .exercise button {
-
       background-color: #3b49df;
-
       color: white;
-
       border: none;
-
       padding: 10px 20px;
-
       font-size: 1rem;
-
       border-radius: 6px;
-
       cursor: pointer;
-
       transition: background-color 0.3s ease;
-
     }
-
     .exercise button:hover {
-
       background-color: #303ecc;
-
     }
-
     .message {
-
       margin-top: 10px;
-
       font-weight: 600;
-
       color: #e53e3e;
-
     }
-
     #graph {
-
       margin: 20px auto;
-
       width: 100%;
-
       max-width: 900px;
-
       height: 450px;
-
       border: 1px dashed #bbb;
-
       background: white;
-
       border-radius: 12px;
-
       overflow: visible;
-
     }
-
     @media (max-width: 600px) {
-
       body {
-
         padding: 10px;
-
       }
-
       .content {
-
         font-size: 1rem;
-
         padding: 15px;
-
       }
-
       pre {
-
         font-size: 0.8rem;
-
       }
-
       .exercise input[type="number"] {
-
         width: 80px;
-
         margin-right: 5px;
-
       }
-
       .exercise button {
-
         padding: 8px 16px;
-
         font-size: 0.9rem;
-
       }
-
       #graph {
-
         height: 350px;
-
       }
-
     }
-
   </style>
-
 </head>
-
 <body>
-
   <h1>{{ topic.title }}</h1>
-
   <div class="content">
-
     <p>{{ topic.explanation|linebreaksbr }}</p>
-
     <pre>{{ topic.example_code }}</pre>
 
-
     {% if exercise %}
-
       <div class="exercise">
-
         <h2>Упражнение: Найдите LCA для данного дерева</h2>
-
         <p>Дано дерево с <strong>{{ num_vertices }}</strong> вершинами.</p>
-
 
         <svg id="graph"></svg>
 
-
         <p>Найдите <strong>наименьшего общего предка</strong> для вершин <strong>{{ v1 }}</strong> и <strong>{{ v2 }}</strong>.</p>
 
-
         <form method="post" novalidate>
-
           {% csrf_token %}
-
           <label for="answer">Введите номер вершины LCA (число):</label>
-
           <input type="number" id="answer" name="answer" required min="0" max="{{ num_vertices|add:'-1' }}" autofocus autocomplete="off"/>
-
           <button type="submit">Проверить</button>
-
         </form>
-
         {% if message %}
-
         <p class="message">{{ message }}</p>
-
         {% endif %}
-
       </div>
 
-
       <script>
-
         const edges = [
-
           {% for u,v in edges %}
-
             [{{ u }}, {{ v }}]{% if not forloop.last %},{% endif %}
-
           {% endfor %}
-
         ];
-
         const numVertices = {{ num_vertices }};
-
         const levels = [
-
           {% for lvl in levels %}
-
             {{ lvl }}{% if not forloop.last %},{% endif %}
-
           {% endfor %}
-
         ];
-
 
         const svg = document.getElementById('graph');
-
         const width = svg.clientWidth || 900;
-
         const height = svg.clientHeight || 450;
 
-
         const levelMap = {};
-
         for(let i=0; i<numVertices; i++) {
-
           let lvl = levels[i];
-
           if(!(lvl in levelMap)) {
-
             levelMap[lvl] = [];
-
           }
-
           levelMap[lvl].push(i);
-
         }
-
-
-        // Вертикальный шаг по уровням
 
         const levelCount = Object.keys(levelMap).length;
-
         const vStep = height / (levelCount + 1);
 
-
-        // Горизонтальный шаг будет рассчитываться индивидуально по уровню
-
-
-        // Рассчитаем позиции вершин
-
         const positions = new Array(numVertices);
-
-
         for(let lvl=0; lvl<levelCount; lvl++) {
-
           const nodes = levelMap[lvl];
-
           const cnt = nodes.length;
-
           const hStep = width / (cnt + 1);
-
           for(let i=0; i<cnt; i++){
-
             let x = hStep * (i + 1);
-
             let y = vStep * (lvl + 1);
-
             positions[nodes[i]] = {x, y};
-
           }
-
         }
-
 
         function createSVGElement(tag, attrs){
-
           let elem = document.createElementNS("http://www.w3.org/2000/svg", tag);
-
           for(let key in attrs){
-
             elem.setAttribute(key, attrs[key]);
-
           }
-
           return elem;
-
         }
-
 
         while(svg.firstChild){
-
           svg.removeChild(svg.firstChild);
-
         }
 
-
-        // Рисуем ребра (линии) от родителя к ребенку
-
         edges.forEach(([u,v]) => {
-
           const p1 = positions[u];
-
           const p2 = positions[v];
-
           let line = createSVGElement('line', {
-
             x1: p1.x,
-
             y1: p1.y + 20,
-
             x2: p2.x,
-
             y2: p2.y - 20,
-
             stroke: '#555',
-
             'stroke-width': 2
-
           });
-
           svg.appendChild(line);
-
         });
-
-
-        // Рисуем вершины
 
         positions.forEach(({x,y}, i) => {
-
           let circle = createSVGElement('circle', {
-
             cx: x,
-
             cy: y,
-
             r: 20,
-
             fill: '#3b49df',
-
             stroke: '#1c2dab',
-
             'stroke-width': 2
-
           });
-
           svg.appendChild(circle);
 
-
           let text = createSVGElement('text', {
-
             x: x,
-
             y: y + 6,
-
             fill: 'white',
-
             'font-family': 'Arial, sans-serif',
-
             'font-size': 14,
-
             'font-weight': 'bold',
-
             'text-anchor': 'middle',
-
             'pointer-events': 'none'
-
           });
-
           text.textContent = i;
-
           svg.appendChild(text);
-
         });
-
       </script>
-
     {% endif %}
-
   </div>
-
   <a href="{% url 'index' %}" class="back-link">&larr; Назад к списку тем</a>
-
 </body>
-
 </html>
