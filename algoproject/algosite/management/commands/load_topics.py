@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from algoproject.algosite.models import Topic
+from algosite.models import Topic
 
 class Command(BaseCommand):
     help = 'Загрузить изначальные темы олимпиадного программирования'
@@ -29,3 +29,7 @@ class Command(BaseCommand):
                     'example_code': data['example_code'],
                 }
             )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f"Создана тема: {topic.title}"))
+            else:
+                self.stdout.write(self.style.WARNING(f"Обновлена тема: {topic.title}"))

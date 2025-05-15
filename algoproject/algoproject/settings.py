@@ -76,6 +76,12 @@ WSGI_APPLICATION = 'algoproject.wsgi.application'
 
 DATABASES = {
     'default': {
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'MySQL-1313',
+        # 'USER': 'user',
+        # 'PASSWORD': '4M8B13Lx476+Mx3UD',
+        # 'HOST': '212.233.93.68',
+        # 'PORT': '3306',
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }

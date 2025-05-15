@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang = "en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f2f5;
+      background: #;
       margin: 0;
       padding: 20px;
       display: flex;
@@ -66,6 +66,18 @@
     {% for topic in topics %}
       <li><a href="{% url 'topic_detail' topic.slug %}">{{ topic.title }}</a></li>
     {% endfor %}
+
+    {% if show_applications_button %}
+      <a href="{% url 'applications' %}">Заявки</a>
+      <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit">Выйти</button>
+      </form>
+
+    {% else %}
+      <a href="{% url 'login' %}">Вход администрации</a>
+    {% endif %}
+
   </ul>
 </body>
 </html>

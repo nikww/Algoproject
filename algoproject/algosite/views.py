@@ -1,5 +1,6 @@
 import random
 from collections import deque
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Topic
 
@@ -7,7 +8,13 @@ LOG = 15
 
 def index(request):
     topics = Topic.objects.all()
-    return render(request, 'algosite/index.html', {'topics': topics})
+    context = {'topics': topics}
+
+    if request.user.is_authenticated:
+        context['show_applications_button'] = True
+    else:
+        context['show_applications_button'] = False
+    return render(request, 'algosite/index.html', context)
 
 def generate_random_tree(n):
     edges = []
@@ -126,3 +133,7 @@ def topic_detail(request, topic_slug):
 
     else:
         return render(request, 'algosite/detail.html', {'topic': topic, 'exercise': False})
+
+@login_required
+def applications(request):
+    return render(request, 'algosite/applications.html')
