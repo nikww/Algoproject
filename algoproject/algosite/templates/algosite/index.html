@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html lang = "en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Темы по олимпиадному программированию</title>
+  <title>Темы</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #;
+      background: #f0f2f5;
       margin: 0;
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: left;
+      position: relative;
       min-height: 100vh;
     }
     h1 {
@@ -20,64 +18,106 @@
       margin-bottom: 25px;
     }
     ul {
-      list-style-type: none;
+      list-style: none;
       padding: 0;
       max-width: 600px;
-      width: 100%;
     }
     li {
-      background-color: white;
+      background: white;
       margin-bottom: 12px;
+      padding: 15px 20px;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 15px 20px;
       font-size: 1.2rem;
       transition: background-color 0.3s ease;
     }
     li:hover {
       background-color: #e0e7ff;
     }
-    a {
-      text-decoration: none;
+    a.topic-link {
       color: #3b49df;
+      text-decoration: none;
       font-weight: bold;
       display: block;
     }
-    a:hover {
+    a.topic-link:hover {
       text-decoration: underline;
     }
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-      li {
-        font-size: 1rem;
-        padding: 12px 15px;
-      }
-      ul {
-        max-width: 100%;
-      }
+    /* Контейнер кнопок вертикально справа */
+    .top-buttons {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 1000;
+    }
+    /* Простой стиль кнопок */
+    .btn {
+      display: inline-block;
+      width: 140px; /* одинаковая ширина */
+      padding: 8px 0;
+      border: none;
+      border-radius: 4px;
+      background-color: #3b49df;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background-color: #2a37c9;
+    }
+    /* Кнопка выхода – стили для <button> внутри формы */
+    .logout-btn {
+      background-color: #3b49df;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 4px;
+      width: 140px;
+      padding: 8px 0;
+      cursor: pointer;
+    }
+    .logout-btn:hover {
+      background-color: #2a37c9;
+    }
+    /* Чтобы кнопка выхода занимала весь размер */
+    .logout-form {
+      margin: 0;
     }
   </style>
 </head>
 <body>
-  <h1>Темы по олимпиадному программированию</h1>
-  <ul>
-    {% for topic in topics %}
-      <li><a href="{% url 'topic_detail' topic.slug %}">{{ topic.title }}</a></li>
-    {% endfor %}
 
-    {% if show_applications_button %}
-      <a href="{% url 'applications' %}">Заявки</a>
-      <form method="post" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button type="submit">Выйти</button>
-      </form>
+<div class="top-buttons">
 
-    {% else %}
-      <a href="{% url 'login' %}">Вход администрации</a>
-    {% endif %}
 
-  </ul>
+  {% if not user.is_authenticated %}
+    <a href="{% url 'submit_topic' %}" class="btn">Отправить свою тему</a>
+  {% endif %}
+
+  {% if user.is_authenticated %}
+    <form method="post" action="{% url 'logout' %}" class="logout-form">
+      {% csrf_token %}
+      <button type="submit" class="logout-btn">Выйти</button>
+    </form>
+    <a href="{% url 'topic_requests' %}" class="btn">Заявки</a>
+  {% else %}
+    <a href="{% url 'login' %}" class="btn">Вход администрации</a>
+  {% endif %}
+</div>
+
+<h1>Темы</h1>
+<ul>
+  {% for topic in topics %}
+    <li><a href="{% url 'topic_detail' topic.slug %}" class="topic-link">{{ topic.title }}</a></li>
+  {% endfor %}
+</ul>
+
 </body>
 </html>

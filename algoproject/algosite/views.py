@@ -2,7 +2,7 @@ import random
 from collections import deque
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Topic
+from .models import Topic, TopicRequest
 
 LOG = 15
 
@@ -134,6 +134,57 @@ def topic_detail(request, topic_slug):
     else:
         return render(request, 'algosite/detail.html', {'topic': topic, 'exercise': False})
 
+
+
+def submit_topic(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        explanation = request.POST.get('explanation')
+        example_code = request.POST.get('example_code')
+
+        TopicRequest.objects.create(
+            title=title,
+            explanation=explanation,
+            example_code=example_code,
+            user=None
+        )
+        #return redirect('index')
+        #return redirect('index')
+
+    return render(request, 'algosite/submit_topic.html')
+
+
+# def is_admin(user):
+#     return user.is_authenticated and user.is_staff
+
 @login_required
-def applications(request):
-    return render(request, 'algosite/applications.html')
+#@user_passes_test(is_admin)
+def topic_requests(request):
+    requests = TopicRequest.objects.filter(approved=False)
+    return render(request, 'algosite/topic_request.html', {'requests': requests})
+
+@login_required
+#@user_passes_test(is_admin)
+def approve_request(request, request_id):
+    topic_request = get_object_or_404(TopicRequest, id=request_id)
+    if request.method == 'POST':
+        from django.utils.text import slugify
+        Topic.objects.create(
+            slug=slugify(topic_request.title),
+            title=topic_request.title,
+            explanation=topic_request.explanation,
+            example_code=topic_request.example_code,
+        )
+        topic_request.approved = True
+        topic_request.save()
+        return redirect('topic_requests')
+    return render(request, 'algosite/approve_request.html', {'request': topic_request})
+
+@login_required
+#@user_passes_test(is_admin)
+def reject_request(request, request_id):
+    topic_request = get_object_or_404(TopicRequest, id=request_id)
+    if request.method == 'POST':
+        topic_request.delete()  # Удаляем заявку
+        return redirect('topic_requests')
+    return render(request, 'algosite/reject_request.html', {'request': topic_request})
