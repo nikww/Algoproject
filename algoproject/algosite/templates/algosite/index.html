@@ -86,7 +86,6 @@
     .logout-btn:hover {
       background-color: #2a37c9;
     }
-    /* Чтобы кнопка выхода занимала весь размер */
     .logout-form {
       margin: 0;
     }
@@ -115,8 +114,11 @@
 <h1>Темы</h1>
 <ul>
   {% for topic in topics %}
-    <li><a href="{% url 'topic_detail' topic.slug %}" class="topic-link">{{ topic.title }}</a></li>
+    {% if topic.slug %}
+    <li><a href="{% url 'topic_detail' topic.slug %}">{{ topic.title }}</a></li>
+    {% endif %}
   {% endfor %}
+
 </ul>
 
 </body>
