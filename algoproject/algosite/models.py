@@ -9,6 +9,13 @@ class Topic(models.Model):
     explanation = models.TextField()
     example_code = models.TextField()
 
+    exercise_render_code = models.TextField(
+        blank=True, null=True
+    )
+    exercise_logic_code = models.TextField(
+        blank=True, null=True
+    )
+
     def __str__(self):
         return self.title
 
