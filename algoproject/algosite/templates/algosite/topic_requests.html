@@ -79,6 +79,13 @@
     a.back-link:hover {
       text-decoration: underline;
     }
+    /* Раздел для отображения результата выполнения кода */
+    .exercise-preview {
+      background: #f0f4ff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
@@ -90,6 +97,25 @@
         <p>{{ request.explanation }}</p>
         <p>Пример кода:</p>
         <pre>{{ request.example_code }}</pre>
+
+        <p>Визуализация упражнения:</p>
+        <div class="exercise-preview">
+          {{ request.exercise_render_code|safe }}
+        </div>
+
+
+
+        <p>Логика проверки:</p>
+        <pre>{{ request.exercise_logic_code }}</pre>
+
+
+
+        <script>
+          {{ request.exercise_logic_code|safe }}
+        </script>
+
+
+
         <div class="buttons">
           <form method="post" action="{% url 'approve_request' request.id %}">
             {% csrf_token %}
@@ -106,6 +132,8 @@
     {% endfor %}
   </ul>
 
-  <a href="{% url 'index' %}" class="back-link">Назад на главную</a>
+
+
+  <a href="{% url 'index' %}" class="back-link">&larr; Назад на главную</a>
 </body>
 </html>

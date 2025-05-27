@@ -159,7 +159,6 @@ class Command(BaseCommand):
             }
         };
     }
-    // Инициализация
     generateExercise();
 })();
 """

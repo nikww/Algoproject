@@ -29,6 +29,14 @@ class TopicRequest(models.Model):
     title = models.CharField(max_length=200)
     explanation = models.TextField()
     example_code = models.TextField()
+
+    exercise_render_code = models.TextField(
+        blank=True, null=True
+    )
+    exercise_logic_code = models.TextField(
+        blank=True, null=True
+    )
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

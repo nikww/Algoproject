@@ -115,7 +115,14 @@
 <ul>
   {% for topic in topics %}
     {% if topic.slug %}
-    <li><a href="{% url 'topic_detail' topic.slug %}">{{ topic.title }}</a></li>
+      <li>
+        <a href="{% url 'topic_detail' topic.slug %}">{{ topic.title }}</a>
+        {% if request.user.is_authenticated and request.user.is_staff %}
+        <a href="{% url 'delete_topic' topic.id %}" class="delete-icon" onclick="return confirm('Вы уверены, что хотите удалить эту тему?');">
+          🗑️
+        </a>
+        {% endif %}
+      </li>
     {% endif %}
   {% endfor %}
 
