@@ -53,13 +53,24 @@
       border: 1px solid #ccc;
       background: #fff;
       border-radius: 6px;
-      min-height: 200px;
+      min-height: 900px;
     }
     .message {
       font-weight: 600;
       text-align: center;
       margin-top: 15px;
       color: green;
+    }
+    a.back-link {
+      display: block;
+      margin-top: 20px;
+      color: #3b49df;
+      text-decoration: none;
+      font-weight: 600;
+      text-align: center;
+    }
+    a.back-link:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -114,5 +125,6 @@
 
     updatePreview();
   </script>
+  <a href="{% url 'index' %}" class="back-link"> Назад на главную</a>
 </body>
 </html>

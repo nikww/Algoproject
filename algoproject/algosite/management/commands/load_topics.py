@@ -151,7 +151,7 @@ class Command(BaseCommand):
             if (userAnswer === correctLCA) {
                 feedback.textContent = "Верно! Отлично!";
                 feedback.style.color = "green";
-                // Генерируем новое упражнение
+
                 generateExercise();
             } else {
                 feedback.textContent = "Неверно, попробуйте ещё раз.";
