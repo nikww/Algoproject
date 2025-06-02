@@ -59,6 +59,17 @@
     button:hover {
       background-color: #2a37c9;
     }
+    .back-link {
+      text-align: center;
+      display: block;
+      margin-top: 10px;
+      color: #3b49df;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -74,6 +85,6 @@
     {{ topic.exercise_logic_code|safe }}
   </script>
 
-  <a href="{% url 'index' %}">На главную странице</a>
+  <a href="{% url 'index' %}" class = "back-link">На главную</a>
 </body>
 </html>

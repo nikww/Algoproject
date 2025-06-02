@@ -5,15 +5,16 @@
   <title>Заявки на добавление темы</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, Helvetica, Verdana, sans-serif;
       background: #f9fafb;
       margin: 0;
       padding: 20px;
       max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0 auto;
     }
-    h2 {
+
+    h2
+    {
       color: #2d3748;
       margin-bottom: 25px;
       text-align: center;
@@ -43,6 +44,7 @@
       white-space: pre-wrap;
       word-break: break-word;
       color: #1a202c;
+      margin-top: 10px;
     }
     .buttons {
       margin-top: 10px;
@@ -80,13 +82,8 @@
       text-decoration: underline;
     }
 
-    .exercise-preview {
-      background: #f0f4ff;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 15px;
-      height: 900px;
-    }
+
+
   </style>
 </head>
 <body>
@@ -99,23 +96,20 @@
         <p>Пример кода:</p>
         <pre>{{ request.example_code }}</pre>
 
-        <p>Визуализация упражнения:</p>
-        <div class="exercise-preview">
+        <div>
+          <h4>Визуализация упражнения:</h4>
           {{ request.exercise_render_code|safe }}
         </div>
 
+        <div>
+          <h4>HTML код страницы:</h4>
+          {{ request.exercise_render_code }}
+        </div>
 
-
-        <p>Логика проверки:</p>
-        <pre>{{ request.exercise_logic_code }}</pre>
-
-
-
-        <script>
-          {{ request.exercise_logic_code|safe }}
-        </script>
-
-
+        <div>
+          <h4>Логика проверки:</h4>
+          <pre>{{ request.exercise_logic_code }}</pre>
+        </div>
 
         <div class="buttons">
           <form method="post" action="{% url 'approve_request' request.id %}">
@@ -133,8 +127,6 @@
     {% endfor %}
   </ul>
 
-
-
-  <a href="{% url 'index' %}" class="back-link"> Назад на главную</a>
+  <a href="{% url 'index' %}" class="back-link">Назад на главную</a>
 </body>
 </html>

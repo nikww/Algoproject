@@ -1,16 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <title>Вход для администратора</title>
+  <style>
+    body {
+      background-color: #f0f2f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background-color: white;
+      padding: 40px 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      width: 320px;
+      box-sizing: border-box;
+    }
+    h1 {
+      margin-bottom: 25px;
+      color: #3b49df;
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    input[type="text"],
+    input[type="password"] {
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #3b49df;
+    }
+    button {
+      padding: 12px;
+      background-color: #3b49df;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 10px; /* Отступ между кнопками */
+    }
+    button:hover {
+      background-color: #2a37c9;
+    }
+    .back-link {
+      text-align: center;
+      display: block;
+      margin-top: 10px;
+      color: #3b49df;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <h1>Вход для администратора</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Войти</button>
-  </form>
-  <p><a href="{% url 'index' %}">На главную</a></p>
+  <div class="login-container">
+    <h1>Вход для администрации</h1>
+    <form method="post">
+      {% csrf_token %}
+      <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+      {{ form.username }}
+
+      <label for="{{ form.password.id_for_label }}">Пароль</label>
+      {{ form.password }}
+
+      <button type="submit">Войти</button>
+    </form>
+    <a href="{% url 'index' %}" class="back-link">Вернуться на главную</a>
+  </div>
 </body>
 </html>

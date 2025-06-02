@@ -8,7 +8,7 @@ class Command(BaseCommand):
         exercise_render_code = """
 <div>
   <h3 id="task-instruction"></h3>
-  <svg id="graph" width="600" height="400" style="border:1px solid #ccc;"></svg>
+  <svg id="graph" width="600" height="600" style="border:1px solid #ccc;"></svg>
   <input id="answer-input" type="number" placeholder="Введите номер вершины" />
   <button id="check-btn">Проверить</button>
   <p id="feedback"></p>
