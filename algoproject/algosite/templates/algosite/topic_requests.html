@@ -1,44 +1,62 @@
 {% extends 'algosite/base.html' %}
-{% block title %}Заявки на добавление темы{% endblock %}
+{% load custom_filters %}
+
+{% block title %}Заявки на добавление тем{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2 class="mb-4 text-center">Заявки на добавление темы</h2>
+<div class="container mt-5" style="max-width: 900px;">
+  <h2 class="text-center mb-4 text-primary">Заявки на добавление тем</h2>
 
   {% if requests %}
   <ul class="list-group">
-    {% for request in requests %}
-      <li class="list-group-item mb-3">
-        <h3>{{ request.title }}</h3>
-        <p>{{ request.explanation }}</p>
+    {% for req in requests %}
+    <li class="list-group-item mb-4 shadow-sm">
+      <h4>{{ req.title }}</h4>
 
-        <h5>Пример кода:</h5>
-        <pre>{{ request.example_code }}</pre>
-
-        <h5>Визуализация упражнения:</h5>
-        <div class="border p-3 rounded bg-light mb-3">
-          {{ request.exercise_render_code|safe }}
+      <div class="mb-3">
+        <h5>Объяснение:</h5>
+        <div class="border p-3 rounded bg-light" style="min-height: 150px;">
+          {{ explanation_html_dict|get_item:req.id|default:req.explanation|safe }}
         </div>
+      </div>
 
+      <div class="mb-3">
+        <h5>Пример кода:</h5>
+        <div class="border p-3 rounded bg-light" style="min-height: 150px; white-space: pre-wrap; font-family: monospace;">
+          {{ example_code_html_dict|get_item:req.id|default:req.example_code|safe }}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <h5>Визуализация упражнения:</h5>
+        <div class="border p-3 rounded bg-light">
+          {{ req.exercise_render_code|safe }}
+        </div>
+        <script>{{ req.exercise_logic_code|safe}} </script>
+      </div>
+
+      <div class="mb-3">
         <h5>Логика проверки:</h5>
-        <pre>{{ request.exercise_logic_code }}</pre>
+        <pre class="bg-light p-2 rounded">{{ req.exercise_logic_code }}</pre>
+      </div>
 
-        <form method="post" action="{% url 'approve_request' request.id %}" style="display: inline;">
+      <div class="d-flex gap-3">
+        <form method="post" action="{% url 'approve_request' req.id %}" class="m-0">
           {% csrf_token %}
-          <button class="btn btn-success me-2">Одобрить</button>
+          <button type="submit" class="btn btn-success">Одобрить</button>
         </form>
-
-        <form method="post" action="{% url 'reject_request' request.id %}" style="display: inline;">
+        <form method="post" action="{% url 'reject_request' req.id %}" class="m-0">
           {% csrf_token %}
-          <button class="btn btn-danger">Отклонить</button>
+          <button type="submit" class="btn btn-danger">Отклонить</button>
         </form>
-      </li>
+      </div>
+    </li>
     {% endfor %}
   </ul>
   {% else %}
-  <p class="text-center">Заявок нет.</p>
+  <p class="text-center text-muted">Заявок нет.</p>
   {% endif %}
 
-  <a href="{% url 'index' %}" class="btn btn-primary mt-4 d-block mx-auto" style="max-width: 250px;">Назад на главную</a>
+  <a href="{% url 'index' %}" class="btn btn-primary mt-4 d-block mx-auto" style="max-width: 250px;">← Назад на главную</a>
 </div>
 {% endblock %}

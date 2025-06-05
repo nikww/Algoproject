@@ -5,16 +5,15 @@
 {% block title %}Отправить новую тему{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Отправить новую тему</h2>
+<div class="container mt-5" style="max-width: 700px;">
+  <h2 class="text-center mb-4 text-primary">Отправить новую тему</h2>
 
   {% if message %}
     <div class="alert alert-success">{{ message }}</div>
   {% endif %}
 
-  <form method="post" novalidate>
+  <form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
-
     <div class="mb-3">
       {{ form.title.label_tag }}
       {{ form.title|add_class:"form-control" }}
@@ -22,15 +21,15 @@
     </div>
 
     <div class="mb-3">
-      {{ form.explanation.label_tag }}
-      {{ form.explanation|add_class:"form-control" }}
-      {{ form.explanation.errors }}
+      {{ form.explanation_file.label_tag }}
+      {{ form.explanation_file|add_class:"form-control" }}
+      {{ form.explanation_file.errors }}
     </div>
 
     <div class="mb-3">
-      {{ form.example_code.label_tag }}
-      {{ form.example_code|add_class:"form-control" }}
-      {{ form.example_code.errors }}
+      {{ form.example_code_file.label_tag }}
+      {{ form.example_code_file|add_class:"form-control" }}
+      {{ form.example_code_file.errors }}
     </div>
 
     <div class="mb-3">
@@ -48,10 +47,10 @@
     <button type="submit" class="btn btn-primary w-100">Отправить</button>
   </form>
 
-  <h3 class="mt-4">Превью упражнения</h3>
+  <h3 class="mt-5">Превью упражнения</h3>
   <div id="preview" class="border p-4 bg-white rounded" style="min-height: 400px;"></div>
 
-  <a href="{% url 'index' %}" class="d-block mt-3 text-center text-primary">Назад на главную</a>
+  <a href="{% url 'index' %}" class="d-block mt-3 text-center text-primary">&larr; Назад на главную</a>
 </div>
 
 <script>
@@ -71,9 +70,10 @@
       preview.appendChild(script);
     }
   }
-  renderInput.addEventListener('input', updatePreview);
 
+  renderInput.addEventListener('input', updatePreview);
   logicInput.addEventListener('input', updatePreview);
+
   updatePreview();
 </script>
 {% endblock %}
