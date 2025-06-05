@@ -1,132 +1,44 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>Заявки на добавление темы</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, Verdana, sans-serif;
-      background: #f9fafb;
-      margin: 0;
-      padding: 20px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
+{% extends 'algosite/base.html' %}
+{% block title %}Заявки на добавление темы{% endblock %}
 
-    h2
-    {
-      color: #2d3748;
-      margin-bottom: 25px;
-      text-align: center;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    li {
-      background: white;
-      padding: 15px 20px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    h3 {
-      margin-top: 0;
-      color: #3b49df;
-    }
-    pre {
-      background-color: #f7f9ff;
-      padding: 10px;
-      border-radius: 6px;
-      overflow-x: auto;
-      font-family: monospace;
-      font-size: 0.9rem;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #1a202c;
-      margin-top: 10px;
-    }
-    .buttons {
-      margin-top: 10px;
-    }
-    form {
-      display: inline;
-      margin-right: 10px;
-    }
-    button {
-      background-color: #3b49df;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
-    }
-    button.reject {
-      background-color: #e53e3e;
-    }
-    button:hover {
-      opacity: 0.85;
-    }
-    a.back-link {
-      display: block;
-      margin-top: 20px;
-      color: #3b49df;
-      text-decoration: none;
-      font-weight: 600;
-      text-align: center;
-    }
-    a.back-link:hover {
-      text-decoration: underline;
-    }
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Заявки на добавление темы</h2>
 
-
-
-  </style>
-</head>
-<body>
-  <h2>Заявки на добавление темы</h2>
-  <ul>
+  {% if requests %}
+  <ul class="list-group">
     {% for request in requests %}
-      <li>
+      <li class="list-group-item mb-3">
         <h3>{{ request.title }}</h3>
         <p>{{ request.explanation }}</p>
-        <p>Пример кода:</p>
+
+        <h5>Пример кода:</h5>
         <pre>{{ request.example_code }}</pre>
 
-        <div>
-          <h4>Визуализация упражнения:</h4>
+        <h5>Визуализация упражнения:</h5>
+        <div class="border p-3 rounded bg-light mb-3">
           {{ request.exercise_render_code|safe }}
         </div>
 
-        <div>
-          <h4>HTML код страницы:</h4>
-          {{ request.exercise_render_code }}
-        </div>
+        <h5>Логика проверки:</h5>
+        <pre>{{ request.exercise_logic_code }}</pre>
 
-        <div>
-          <h4>Логика проверки:</h4>
-          <pre>{{ request.exercise_logic_code }}</pre>
-        </div>
+        <form method="post" action="{% url 'approve_request' request.id %}" style="display: inline;">
+          {% csrf_token %}
+          <button class="btn btn-success me-2">Одобрить</button>
+        </form>
 
-        <div class="buttons">
-          <form method="post" action="{% url 'approve_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit">Одобрить</button>
-          </form>
-          <form method="post" action="{% url 'reject_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit" class="reject">Отклонить</button>
-          </form>
-        </div>
+        <form method="post" action="{% url 'reject_request' request.id %}" style="display: inline;">
+          {% csrf_token %}
+          <button class="btn btn-danger">Отклонить</button>
+        </form>
       </li>
-    {% empty %}
-      <li>Заявок нет.</li>
     {% endfor %}
   </ul>
+  {% else %}
+  <p class="text-center">Заявок нет.</p>
+  {% endif %}
 
-  <a href="{% url 'index' %}" class="back-link">Назад на главную</a>
-</body>
-</html>
+  <a href="{% url 'index' %}" class="btn btn-primary mt-4 d-block mx-auto" style="max-width: 250px;">Назад на главную</a>
+</div>
+{% endblock %}

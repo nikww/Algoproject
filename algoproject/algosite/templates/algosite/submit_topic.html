@@ -1,134 +1,79 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>Отправить новую тему</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f9fafb;
-      margin: 0 auto;
-      padding: 20px;
-      max-width: 700px;
-      color: #333;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 15px;
-      margin-bottom: 6px;
-      font-size: 1rem;
-    }
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 8px;
-      font-family: monospace;
-      font-size: 14px;
-      border: 1px solid #cbd5e0;
-      border-radius: 5px;
-      box-sizing: border-box;
-      resize: vertical;
-    }
-    textarea {
-      min-height: 100px;
-    }
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px 0;
-      background-color: #3b49df;
-      border: none;
-      border-radius: 6px;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #2a37c9;
-    }
-    #preview {
-      margin-top: 25px;
-      padding: 15px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      min-height: 400px;
-    }
-    .message {
-      margin-top: 15px;
-      font-weight: 600;
-      color: green;
-      text-align: center;
-    }
-    a.back-link {
-      display: block;
-      margin-top: 15px;
-      text-align: center;
-      color: #3b49df;
-      text-decoration: none;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    a.back-link:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
+
+{% extends 'algosite/base.html' %}
+{% load form_tags %}
+
+{% block title %}Отправить новую тему{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
   <h2>Отправить новую тему</h2>
 
   {% if message %}
-  <div class="message">{{ message }}</div>
+    <div class="alert alert-success">{{ message }}</div>
   {% endif %}
 
-  <form method="post">
+  <form method="post" novalidate>
     {% csrf_token %}
 
-    <label for="id_title">Название темы</label>
-    {{ form.title }}
+    <div class="mb-3">
+      {{ form.title.label_tag }}
+      {{ form.title|add_class:"form-control" }}
+      {{ form.title.errors }}
+    </div>
 
-    <label for="id_explanation">Объяснение темы</label>
-    {{ form.explanation }}
+    <div class="mb-3">
+      {{ form.explanation.label_tag }}
+      {{ form.explanation|add_class:"form-control" }}
+      {{ form.explanation.errors }}
+    </div>
 
-    <label for="id_example_code">Пример кода</label>
-    {{ form.example_code }}
+    <div class="mb-3">
+      {{ form.example_code.label_tag }}
+      {{ form.example_code|add_class:"form-control" }}
+      {{ form.example_code.errors }}
+    </div>
 
-    <label for="id_exercise_render_code">HTML код упражнения</label>
-    {{ form.exercise_render_code }}
+    <div class="mb-3">
+      {{ form.exercise_render_code.label_tag }}
+      {{ form.exercise_render_code|add_class:"form-control" }}
+      {{ form.exercise_render_code.errors }}
+    </div>
 
-    <label for="id_exercise_logic_code">JS код упражнения</label>
-    {{ form.exercise_logic_code }}
+    <div class="mb-3">
+      {{ form.exercise_logic_code.label_tag }}
+      {{ form.exercise_logic_code|add_class:"form-control" }}
+      {{ form.exercise_logic_code.errors }}
+    </div>
 
-    <button type="submit">Отправить</button>
+    <button type="submit" class="btn btn-primary w-100">Отправить</button>
   </form>
 
-  <h3>Превью упражнения</h3>
-  <div id="preview"></div>
+  <h3 class="mt-4">Превью упражнения</h3>
+  <div id="preview" class="border p-4 bg-white rounded" style="min-height: 400px;"></div>
 
-  <a href="{% url 'index' %}" class="back-link">Назад</a>
+  <a href="{% url 'index' %}" class="d-block mt-3 text-center text-primary">Назад на главную</a>
+</div>
 
-  <script>
-    const renderInput = document.getElementById('id_exercise_render_code');
-    const logicInput = document.getElementById('id_exercise_logic_code');
-    const preview = document.getElementById('preview');
+<script>
+  const renderInput = document.getElementById('id_exercise_render_code');
+  const logicInput = document.getElementById('id_exercise_logic_code');
+  const preview = document.getElementById('preview');
 
-    function updatePreview() {
-      preview.innerHTML = renderInput.value;
-      const oldScripts = preview.querySelectorAll('script');
-      oldScripts.forEach(s => s.remove());
-      if (logicInput.value.trim()) {
-        const script = document.createElement('script');
-        script.text = logicInput.value;
-        preview.appendChild(script);
-      }
+  function updatePreview() {
+    preview.innerHTML = renderInput.value;
+
+    const oldScripts = preview.querySelectorAll('script');
+    oldScripts.forEach(s => s.remove());
+
+    if (logicInput.value.trim()) {
+      const script = document.createElement('script');
+      script.text = logicInput.value;
+      preview.appendChild(script);
     }
+  }
+  renderInput.addEventListener('input', updatePreview);
 
-    renderInput.addEventListener('input', updatePreview);
-    logicInput.addEventListener('input', updatePreview);
-
-    updatePreview();
-  </script>
-</body>
-</html>
+  logicInput.addEventListener('input', updatePreview);
+  updatePreview();
+</script>
+{% endblock %}

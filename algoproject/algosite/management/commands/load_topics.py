@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from algosite.models import Topic
 
 class Command(BaseCommand):
-    help = 'Загрузить изначальные темы с упражнениями и логикой'
+
 
     def handle(self, *args, **options):
         exercise_render_code = """

@@ -1,90 +1,27 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>{{ topic.title }}</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f9fafb;
-      margin: 0 auto;
-      padding: 20px;
-      max-width: 900px;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-      color: #2d3748;
-    }
-    pre {
-      background: #1e1e1e;
-      color: #d4d4d4;
-      padding: 15px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 0.9rem;
-      overflow-x: auto;
-      margin-top: 20px;
-    }
-    #graph {
-      width: 600px;
-      height: 400px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      margin: 20px auto;
-      display: block;
-      background: white;
-    }
-    #feedback {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    input, button {
-      font-size: 1rem;
-      padding: 8px;
-      margin: 5px 0;
-    }
-    input {
-      width: 150px;
-    }
-    button {
-      cursor: pointer;
-      background-color: #3b49df;
-      border: none;
-      color: white;
-      border-radius: 6px;
-      padding: 8px 15px;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #2a37c9;
-    }
-    .back-link {
-      text-align: center;
-      display: block;
-      margin-top: 10px;
-      color: #3b49df;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .back-link:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <h1>{{ topic.title }}</h1>
-  <p>{{ topic.explanation|linebreaksbr }}</p>
-  <pre>{{ topic.example_code }}</pre>
+{% extends 'algosite/base.html' %}
+{% block title %}{{ topic.title }}{% endblock %}
 
-  <div id="exercise-container">
-    {{ topic.exercise_render_code|safe }}
-  </div>
+{% block content %}
+<div class="container mt-4" style="max-width: 1000px; padding-left: 10px; padding-right: 10px;">
+  <h1 class="text-center mb-4">{{ topic.title }}</h1>
 
-  <script>
-    {{ topic.exercise_logic_code|safe }}
-  </script>
+  <p style="max-width: 100%; margin-left: auto; margin-right: auto;">{{ topic.explanation|linebreaksbr }}</p>
 
-  <a href="{% url 'index' %}" class = "back-link">На главную</a>
-</body>
-</html>
+  <h4>Пример кода:</h4>
+  <pre style="max-width: 100%; margin-left: auto; margin-right: auto; overflow-x:auto;">{{ topic.example_code }}</pre>
+
+  {% if topic.exercise_render_code %}
+    <div id="exercise-container" class="border p-3 rounded bg-white mb-3" style="max-width: 100%; margin-left: auto; margin-right: auto;">
+      {{ topic.exercise_render_code|safe }}
+    </div>
+  {% endif %}
+
+  {% if topic.exercise_logic_code %}
+    <script>
+      {{ topic.exercise_logic_code|safe }}
+    </script>
+  {% endif %}
+
+  <a href="{% url 'index' %}" class="btn btn-link">Назад</a>
+</div>
+{% endblock %}
