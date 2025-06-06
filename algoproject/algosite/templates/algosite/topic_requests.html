@@ -13,19 +13,17 @@
     <li class="list-group-item mb-4 shadow-sm">
       <h4>{{ req.title }}</h4>
 
-      <div class="mb-3">
-        <h5>Объяснение:</h5>
-        <div class="border p-3 rounded bg-light" style="min-height: 150px;">
-          {{ explanation_html_dict|get_item:req.id|default:req.explanation|safe }}
-        </div>
-      </div>
+      <section class="mb-4 prose max-w-none">
+        <h3>Объяснение</h3>
+        <div>{% autoescape off %}{{ explanation_html_dict|get_item:req.id|default:req.explanation }}{% endautoescape %}</div>
+      </section>
 
-      <div class="mb-3">
-        <h5>Пример кода:</h5>
-        <div class="border p-3 rounded bg-light" style="min-height: 150px; white-space: pre-wrap; font-family: monospace;">
-          {{ example_code_html_dict|get_item:req.id|default:req.example_code|safe }}
-        </div>
-      </div>
+
+      <section class="mb-4 prose max-w-none">
+        <h3>Пример кода</h3>
+        <div>{% autoescape off %}{{ example_code_html_dict|get_item:req.id|default:req.example_code }}{% endautoescape %}</div>
+      </section>
+
 
       <div class="mb-3">
         <h5>Визуализация упражнения:</h5>

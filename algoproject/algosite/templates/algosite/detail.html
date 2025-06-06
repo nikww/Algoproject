@@ -6,11 +6,21 @@
 <div class="container mt-4" style="max-width: 800px;">
   <h1 class="mb-4 text-center">{{ topic.title }}</h1>
 
-  <h2>Объяснение</h2>
-  <div id="explanation" class="border p-3 rounded bg-light min-vh-25">Загрузка...</div>
+  <section class="card">
+    <h2>Объяснение</h2>
+    <div style="min-height: 200px;">
+      {{ topic.explanation|safe }}
+    </div>
+  </section>
 
-  <h2>Пример кода</h2>
-  <div id="example_code" class="border p-3 rounded bg-light min-vh-25">Загрузка...</div>
+
+  <section class="card mt-4">
+    <h2>Пример кода</h2>
+    <pre style="overflow-x: auto;">
+      {{ topic.example_code|safe }}
+    </pre>
+  </section>
+
 
   {% if topic.exercise_render_code %}
     <div id="exercise-container" class="border p-3 rounded bg-white mb-3">
@@ -26,38 +36,4 @@
 
   <a href="{% url 'index' %}" class="btn btn-link mt-4">Назад</a>
 </div>
-
-<script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
-<script>
-  function base64ToUint8Array(base64) {
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
-  }
-
-  const explanationBase64 = "{{ explanation_blob|b64encode }}";
-  const exampleCodeBase64 = "{{ example_code_blob|b64encode }}";
-
-  mammoth.convertToHtml({ arrayBuffer: base64ToUint8Array(explanationBase64) })
-    .then(function(result) {
-      document.getElementById("explanation").innerHTML = result.value;
-    })
-    .catch(function(err) {
-      document.getElementById("explanation").innerHTML = "<p>Ошибка загрузки объяснения</p>";
-      console.error(err);
-    });
-
-  mammoth.convertToHtml({ arrayBuffer: base64ToUint8Array(exampleCodeBase64) })
-    .then(function(result) {
-      document.getElementById("example_code").innerHTML = result.value;
-    })
-    .catch(function(err) {
-      document.getElementById("example_code").innerHTML = "<p>Ошибка загрузки примера кода</p>";
-      console.error(err);
-    });
-</script>
 {% endblock %}
