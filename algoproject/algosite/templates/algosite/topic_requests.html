@@ -29,16 +29,30 @@
 
       <div class="mb-3">
         <h5>Визуализация упражнения:</h5>
-        <div class="border p-3 rounded bg-light">
+        <div class="border p-3 rounded bg-light" style = "min-height: 900px;">
           {{ req.exercise_render_code|safe }}
         </div>
         <script>{{ req.exercise_logic_code|safe}} </script>
       </div>
 
-      <div class="mb-3">
-        <h5>Логика проверки:</h5>
-        <pre class="bg-light p-2 rounded">{{ req.exercise_logic_code }}</pre>
+      <div class = "mb-3">
+        <details style="background: #f9fafb; padding: 1rem; border-radius: 0.5rem; line-height: 1.5; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+          <summary style="font-weight: 600; cursor: pointer; font-size: 1.1rem; user-select: none;">Показать HTML код упражнения</summary>
+          <pre style="margin-top: 1rem; white-space: pre-wrap; font-family: Consolas, Monaco, monospace; font-size: 0.9rem;">
+              {{ req.exercise_render_code }}
+          </pre>
+        </details>
       </div>
+
+    <div class = "mb-3">
+      <details style="background: #f9fafb; padding: 1rem; border-radius: 0.5rem; line-height: 1.5; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+          <summary style="font-weight: 600; cursor: pointer; font-size: 1.1rem; user-select: none;">Показать логику проверки</summary>
+          <pre style="margin-top: 1rem; white-space: pre-wrap; font-family: Consolas, Monaco, monospace; font-size: 0.9rem;">
+              {{ req.exercise_logic_code }}
+          </pre>
+      </details>
+    </div>
+
 
       <div class="d-flex gap-3">
         <form method="post" action="{% url 'approve_request' req.id %}" class="m-0">
@@ -54,7 +68,7 @@
     {% endfor %}
   </ul>
   {% else %}
-  <p class="text-center text-muted">Заявок нет.</p>
+      <p class="text-center text-muted">Заявок нет.</p>
   {% endif %}
 
   <a href="{% url 'index' %}" class="btn btn-primary mt-4 d-block mx-auto" style="max-width: 250px;">← Назад на главную</a>

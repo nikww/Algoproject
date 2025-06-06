@@ -6,6 +6,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         exercise_render_code = """
+<!DOCTYPE html>
+<body>
 <div>
   <h3 id="task-instruction"></h3>
   <svg id="graph" width="600" height="600" style="border:1px solid #ccc;"></svg>
@@ -13,6 +15,8 @@ class Command(BaseCommand):
   <button id="check-btn">Проверить</button>
   <p id="feedback"></p>
 </div>
+</body>
+</html>
 """
 
         exercise_logic_code = """
