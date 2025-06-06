@@ -1,79 +1,157 @@
-
 {% extends 'algosite/base.html' %}
 {% load form_tags %}
 
 {% block title %}Отправить новую тему{% endblock %}
 
 {% block content %}
-<div class="container mt-5" style="max-width: 700px;">
-  <h2 class="text-center mb-4 text-primary">Отправить новую тему</h2>
+<div class="container mt-4" style="max-width: 700px;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+      <h2 class="text-center mb-4 text-primary font-weight-bold">
+        <i class="fas fa-plus-circle mr-2"></i>Отправить новую тему
+      </h2>
 
-  {% if message %}
-    <div class="alert alert-success">{{ message }}</div>
-  {% endif %}
+      {% if message %}
+        <div class="alert alert-success alert-dismissible fade show">
+          {{ message }}
+        </div>
+      {% endif %}
 
-  <form method="post" enctype="multipart/form-data" novalidate>
-    {% csrf_token %}
-    <div class="mb-3">
-      {{ form.title.label_tag }}
-      {{ form.title|add_class:"form-control" }}
-      {{ form.title.errors }}
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <div class="form-group mb-4">
+          <label for="{{ form.title.id_for_label }}" class="font-weight-bold text-secondary">
+            <i class="fas fa-heading mr-2"></i>{{ form.title.label }}
+          </label>
+          {{ form.title|add_class:"form-control form-control-lg" }}
+          <small class="form-text text-muted">Краткое и понятное название темы</small>
+          {{ form.title.errors }}
+        </div>
+
+        <div class="form-group mb-4">
+          <label for="{{ form.explanation_file.id_for_label }}" class="font-weight-bold text-secondary">
+            <i class="fas fa-file-word mr-2"></i>{{ form.explanation_file.label }}
+          </label>
+          <div class="custom-file">
+            {{ form.explanation_file|add_class:"custom-file-input" }}
+            <label class="custom-file-label" for="{{ form.explanation_file.id_for_label }}">Выберите .docx файл</label>
+          </div>
+          {{ form.explanation_file.errors }}
+        </div>
+
+        <!-- Пример кода -->
+        <div class="form-group mb-4">
+          <label for="{{ form.example_code_file.id_for_label }}" class="font-weight-bold text-secondary">
+            <i class="fas fa-code mr-2"></i>{{ form.example_code_file.label }}
+          </label>
+          <div class="custom-file">
+            {{ form.example_code_file|add_class:"custom-file-input" }}
+            <label class="custom-file-label" for="{{ form.example_code_file.id_for_label }}">Выберите .docx файл</label>
+          </div>
+          {{ form.example_code_file.errors }}
+        </div>
+
+        <!-- HTML код упражнения -->
+        <div class="form-group mb-4">
+          <label for="{{ form.exercise_render_code.id_for_label }}" class="font-weight-bold text-secondary">
+            <i class="fab fa-html5 mr-2"></i>{{ form.exercise_render_code.label }}
+          </label>
+          {{ form.exercise_render_code|add_class:"form-control" }}
+          <small class="form-text text-muted">HTML-код для отображения упражнения</small>
+          {{ form.exercise_render_code.errors }}
+        </div>
+
+        <!-- Логический код упражнения -->
+        <div class="form-group mb-4">
+          <label for="{{ form.exercise_logic_code.id_for_label }}" class="font-weight-bold text-secondary">
+            <i class="fas fa-cogs mr-2"></i>{{ form.exercise_logic_code.label }}
+          </label>
+          {{ form.exercise_logic_code|add_class:"form-control" }}
+          <small class="form-text text-muted">JavaScript-код для логики упражнения</small>
+          {{ form.exercise_logic_code.errors }}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block py-2 mt-3">
+          <i class="fas fa-paper-plane mr-2"></i>Отправить
+        </button>
+      </form>
     </div>
+  </div>
 
-    <div class="mb-3">
-      {{ form.explanation_file.label_tag }}
-      {{ form.explanation_file|add_class:"form-control" }}
-      {{ form.explanation_file.errors }}
+  <div class="card shadow-sm border-0 mt-4">
+    <div class="card-body p-4">
+      <h3 class="mb-3 text-info">
+        <i class="fas fa-eye mr-2"></i>Превью упражнения
+      </h3>
+      <div id="preview" class="border p-4 bg-light rounded" style="min-height: 200px;">
+        <p class="text-muted text-center my-5">Здесь будет отображаться превью вашего упражнения</p>
+      </div>
     </div>
+  </div>
 
-    <div class="mb-3">
-      {{ form.example_code_file.label_tag }}
-      {{ form.example_code_file|add_class:"form-control" }}
-      {{ form.example_code_file.errors }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.exercise_render_code.label_tag }}
-      {{ form.exercise_render_code|add_class:"form-control" }}
-      {{ form.exercise_render_code.errors }}
-    </div>
-
-    <div class="mb-3">
-      {{ form.exercise_logic_code.label_tag }}
-      {{ form.exercise_logic_code|add_class:"form-control" }}
-      {{ form.exercise_logic_code.errors }}
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Отправить</button>
-  </form>
-
-  <h3 class="mt-5">Превью упражнения</h3>
-  <div id="preview" class="border p-4 bg-white rounded" style="min-height: 400px;"></div>
-
-  <a href="{% url 'index' %}" class="d-block mt-3 text-center text-primary">&larr; Назад на главную</a>
+  <a href="{% url 'index' %}" class="d-block mt-4 text-center text-primary font-weight-bold">
+    <i class="fas fa-arrow-left mr-2"></i>Назад на главную
+  </a>
 </div>
 
 <script>
+  // Обновление названия выбранного файла
+  document.querySelectorAll('.custom-file-input').forEach(input => {
+    input.addEventListener('change', function(e) {
+      const fileName = e.target.files[0]?.name || 'Выберите файл';
+      const label = this.nextElementSibling;
+      label.textContent = fileName;
+    });
+  });
+
   const renderInput = document.getElementById('id_exercise_render_code');
   const logicInput = document.getElementById('id_exercise_logic_code');
   const preview = document.getElementById('preview');
 
   function updatePreview() {
-    preview.innerHTML = renderInput.value;
+    if (renderInput.value.trim()) {
+      preview.innerHTML = renderInput.value;
 
-    const oldScripts = preview.querySelectorAll('script');
-    oldScripts.forEach(s => s.remove());
+      const oldScripts = preview.querySelectorAll('script');
+      oldScripts.forEach(s => s.remove());
 
-    if (logicInput.value.trim()) {
-      const script = document.createElement('script');
-      script.text = logicInput.value;
-      preview.appendChild(script);
+      if (logicInput.value.trim()) {
+        const script = document.createElement('script');
+        script.text = logicInput.value;
+        preview.appendChild(script);
+      }
+    } else {
+      preview.innerHTML = '<p class="text-muted text-center my-5">Здесь будет отображаться превью вашего упражнения</p>';
     }
   }
 
   renderInput.addEventListener('input', updatePreview);
   logicInput.addEventListener('input', updatePreview);
-
-  updatePreview();
 </script>
+
+<style>
+  .card {
+    border-radius: 10px;
+  }
+
+  .form-group label {
+    margin-bottom: 0.5rem;
+  }
+
+  .custom-file-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #preview {
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+</style>
 {% endblock %}

@@ -2,9 +2,11 @@ import os
 import base64
 from io import BytesIO
 from docx import Document
+from docx.shared import Pt, Twips
 from django.conf import settings
 from django.utils.html import escape
 from docx.oxml.ns import nsdecls
+
 
 def docx_bin_to_html(docx_binary):
     document = Document(BytesIO(docx_binary))
@@ -15,7 +17,7 @@ def docx_bin_to_html(docx_binary):
         if "image" in rel.reltype:
             image_bytes = rel.target_part.blob
             b64 = base64.b64encode(image_bytes).decode('utf-8')
-            mime_type = 'image/png'
+            mime_type = 'image/png'  # Можно определить точный тип, но для простоты используем png
             image_map[rel.rId] = f"data:{mime_type};base64,{b64}"
 
     html = ''
@@ -23,35 +25,65 @@ def docx_bin_to_html(docx_binary):
     a_namespace = {'a': 'http://schemas.openxmlformats.org/drawingml/2006/main'}
 
     for para in document.paragraphs:
-        indent = para.paragraph_format.left_indent
-        indent_px = int(indent.pt) if indent else 0
-        style = f"padding-left: {indent_px}px;" if indent_px > 0 else ""
-        p_html = f'<p style="{style}">'
+        p_style = []
+
+        pf = para.paragraph_format
+
+        if pf.left_indent is not None:
+            left_pt = pf.left_indent.pt
+            p_style.append(f"margin-left: {left_pt}pt;")
+
+        if pf.first_line_indent is not None:
+            indent_pt = pf.first_line_indent.pt
+
+            p_style.append(f"text-indent: {indent_pt}pt;")
+
+        if pf.right_indent is not None:
+            right_pt = pf.right_indent.pt
+            p_style.append(f"margin-right: {right_pt}pt;")
+
+        # Выравнивание
+        alignment_map = {
+            0: "left",
+            1: "center",
+            2: "right",
+            3: "justify"
+        }
+        if pf.alignment is not None and pf.alignment in alignment_map:
+            p_style.append(f"text-align: {alignment_map[pf.alignment]};")
+
+        style_attr = f' style="{" ".join(p_style)}"' if p_style else ""
+        p_html = f'<p{style_attr}>'
 
         for run in para.runs:
-            text = escape(run.text)
+            text = escape(run.text) if run.text else ""
+            run_html = text
+
             if run.bold:
-                text = f'<strong>{text}</strong>'
+                run_html = f'<strong>{run_html}</strong>'
             if run.italic:
-                text = f'<em>{text}</em>'
+                run_html = f'<em>{run_html}</em>'
             if run.underline:
-                text = f'<u>{text}</u>'
+                run_html = f'<u>{run_html}</u>'
+
             if run.font.color and run.font.color.rgb:
-                text = f'<span style="color: #{run.font.color.rgb}">{text}</span>'
+                run_html = f'<span style="color:#{run.font.color.rgb}">{run_html}</span>'
+
             if run.font.size:
                 size_pt = run.font.size.pt
-                text = f'<span style="font-size: {size_pt}pt;">{text}</span>'
+                run_html = f'<span style="font-size:{size_pt}pt">{run_html}</span>'
 
             for pic in run._element.findall(".//pic:pic", namespaces=pic_namespace):
                 blip = pic.find(".//a:blip", namespaces=a_namespace)
                 if blip is not None:
-                    rId = blip.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed')
-                    img_src = image_map.get(rId, '')
+                    rId = blip.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed")
+                    img_src = image_map.get(rId, "")
                     if img_src:
-                        text += f'<img src="{img_src}" style="max-width:100%; margin: 5px 0;" />'
+                        run_html += f'<img src="{img_src}" style="display:block; max-width:100%; margin:5px 0;"/>'
 
-            p_html += text
-        p_html += '</p>'
+            p_html += run_html
+
+        p_html += "</p>"
         html += p_html
 
     return html

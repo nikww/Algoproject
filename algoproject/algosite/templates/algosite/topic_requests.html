@@ -1,74 +1,96 @@
 {% extends 'algosite/base.html' %}
 {% load custom_filters %}
-
 {% block title %}Заявки на добавление тем{% endblock %}
 
 {% block content %}
-<div class="container mt-5" style="max-width: 900px;">
+<div class="container mt-4" style="max-width: 900px;">
   <h2 class="text-center mb-4 text-primary">Заявки на добавление тем</h2>
 
   {% if requests %}
-  <ul class="list-group">
+  <div class="request-list">
     {% for req in requests %}
-    <li class="list-group-item mb-4 shadow-sm">
-      <h4>{{ req.title }}</h4>
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title text-dark mb-4">{{ req.title }}</h4>
 
-      <section class="mb-4 prose max-w-none">
-        <h3>Объяснение</h3>
-        <div>{% autoescape off %}{{ explanation_html_dict|get_item:req.id|default:req.explanation }}{% endautoescape %}</div>
-      </section>
-
-
-      <section class="mb-4 prose max-w-none">
-        <h3>Пример кода</h3>
-        <div>{% autoescape off %}{{ example_code_html_dict|get_item:req.id|default:req.example_code }}{% endautoescape %}</div>
-      </section>
-
-
-      <div class="mb-3">
-        <h5>Визуализация упражнения:</h5>
-        <div class="border p-3 rounded bg-light" style = "min-height: 900px;">
-          {{ req.exercise_render_code|safe }}
+        <div class="mb-4 p-3 bg-light rounded">
+          <h5 class="text-info mb-3">Объяснение</h5>
+          <div>{{ explanation_html_dict|get_item:req.id|default:req.explanation|safe}}</div>
         </div>
-        <script>{{ req.exercise_logic_code|safe}} </script>
-      </div>
 
-      <div class = "mb-3">
-        <details style="background: #f9fafb; padding: 1rem; border-radius: 0.5rem; line-height: 1.5; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-          <summary style="font-weight: 600; cursor: pointer; font-size: 1.1rem; user-select: none;">Показать HTML код упражнения</summary>
-          <pre style="margin-top: 1rem; white-space: pre-wrap; font-family: Consolas, Monaco, monospace; font-size: 0.9rem;">
-              {{ req.exercise_render_code }}
-          </pre>
+        <div class="mb-4 p-3 bg-light rounded">
+          <h5 class="text-info mb-3">Пример кода</h5>
+          <div>{{ example_code_html_dict|get_item:req.id|default:req.example_code|safe}}</div>
+        </div>
+
+        <div class="mb-4">
+          <h5 class="text-info mb-3">Визуализация упражнения</h5>
+          <div class="p-3 bg-white border rounded">
+            {{ req.exercise_render_code|safe }}
+          </div>
+          <script>{{ req.exercise_logic_code|safe}}</script>
+        </div>
+
+        <details class="mb-3">
+          <summary class="btn btn-outline-secondary btn-sm">HTML код упражнения</summary>
+          <pre class="mt-2 p-3 bg-light border rounded"><code>{{ req.exercise_render_code }}</code></pre>
         </details>
-      </div>
 
-    <div class = "mb-3">
-      <details style="background: #f9fafb; padding: 1rem; border-radius: 0.5rem; line-height: 1.5; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-          <summary style="font-weight: 600; cursor: pointer; font-size: 1.1rem; user-select: none;">Показать логику проверки</summary>
-          <pre style="margin-top: 1rem; white-space: pre-wrap; font-family: Consolas, Monaco, monospace; font-size: 0.9rem;">
-              {{ req.exercise_logic_code }}
-          </pre>
-      </details>
+        <details class="mb-4">
+          <summary class="btn btn-outline-secondary btn-sm">Логика проверки</summary>
+          <pre class="mt-2 p-3 bg-light border rounded"><code>{{ req.exercise_logic_code }}</code></pre>
+        </details>
+
+        <div class="d-flex gap-3">
+          <form method="post" action="{% url 'approve_request' req.id %}" class="w-50">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success w-100">Одобрить</button>
+          </form>
+          <form method="post" action="{% url 'reject_request' req.id %}" class="w-50">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger w-100">Отклонить</button>
+          </form>
+        </div>
+      </div>
     </div>
-
-
-      <div class="d-flex gap-3">
-        <form method="post" action="{% url 'approve_request' req.id %}" class="m-0">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-success">Одобрить</button>
-        </form>
-        <form method="post" action="{% url 'reject_request' req.id %}" class="m-0">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Отклонить</button>
-        </form>
-      </div>
-    </li>
     {% endfor %}
-  </ul>
+  </div>
   {% else %}
-      <p class="text-center text-muted">Заявок нет.</p>
+  <div class="text-center p-5 bg-light rounded">
+    <p class="text-muted h5">Нет заявок для рассмотрения</p>
+  </div>
   {% endif %}
 
-  <a href="{% url 'index' %}" class="btn btn-primary mt-4 d-block mx-auto" style="max-width: 250px;">← Назад на главную</a>
+  <a href="{% url 'index' %}" class="btn btn-outline-primary mt-4 d-block mx-auto" style="max-width: 250px;">
+    Назад на главную
+  </a>
 </div>
+
+<style>
+  .card {
+    border-radius: 8px;
+    border: none;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  details {
+    margin-bottom: 1rem;
+  }
+
+  summary {
+    outline: none;
+    cursor: pointer;
+  }
+
+  .bg-light {
+    background-color: #f8f9fa !important;
+  }
+</style>
 {% endblock %}
