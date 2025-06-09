@@ -63,14 +63,13 @@ def topic_requests(request):
 
     for topic_request in topic_requests_list:
         if topic_request.explanation:
-            # Создаем объект BytesIO из бинарных данных
             docx_file = BytesIO(topic_request.explanation)
             result = mammoth.convert_to_html(docx_file)
             explanation_html_dict[topic_request.id] = result.value
 
         if topic_request.example_code:
-            # Аналогично для example_code
             docx_file = BytesIO(topic_request.example_code)
+            
             result = mammoth.convert_to_html(docx_file)
             example_code_html_dict[topic_request.id] = result.value
 
