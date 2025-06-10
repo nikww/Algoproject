@@ -2,10 +2,16 @@ import os
 import base64
 from io import BytesIO
 from docx import Document
-from docx.shared import Pt, Twips
-from django.conf import settings
+from docx.shared import Pt
 from django.utils.html import escape
-from docx.oxml.ns import nsdecls
+
+
+def process_whitespace_indent(text):
+    leading_spaces = len(text) - len(text.lstrip(' '))
+    leading_tabs = len(text) - len(text.lstrip('\t'))
+
+    indent_px = (leading_spaces * 5) + (leading_tabs * 40)
+    return f'margin-left: {indent_px}px;' if indent_px > 0 else ''
 
 
 def docx_bin_to_html(docx_binary):
@@ -17,7 +23,7 @@ def docx_bin_to_html(docx_binary):
         if "image" in rel.reltype:
             image_bytes = rel.target_part.blob
             b64 = base64.b64encode(image_bytes).decode('utf-8')
-            mime_type = 'image/png'  # Можно определить точный тип, но для простоты используем png
+            mime_type = 'image/png'
             image_map[rel.rId] = f"data:{mime_type};base64,{b64}"
 
     html = ''
@@ -29,20 +35,20 @@ def docx_bin_to_html(docx_binary):
 
         pf = para.paragraph_format
 
+        # Process official indent properties
         if pf.left_indent is not None:
             left_pt = pf.left_indent.pt
             p_style.append(f"margin-left: {left_pt}pt;")
 
         if pf.first_line_indent is not None:
             indent_pt = pf.first_line_indent.pt
-
             p_style.append(f"text-indent: {indent_pt}pt;")
 
         if pf.right_indent is not None:
             right_pt = pf.right_indent.pt
             p_style.append(f"margin-right: {right_pt}pt;")
 
-        # Выравнивание
+        # Process alignment
         alignment_map = {
             0: "left",
             1: "center",
@@ -52,9 +58,15 @@ def docx_bin_to_html(docx_binary):
         if pf.alignment is not None and pf.alignment in alignment_map:
             p_style.append(f"text-align: {alignment_map[pf.alignment]};")
 
+        # Process leading whitespace (spaces and tabs)
+        whitespace_style = process_whitespace_indent(para.text)
+        if whitespace_style:
+            p_style.append(whitespace_style)
+
         style_attr = f' style="{" ".join(p_style)}"' if p_style else ""
         p_html = f'<p{style_attr}>'
 
+        # Process text runs
         for run in para.runs:
             text = escape(run.text) if run.text else ""
             run_html = text
@@ -73,6 +85,7 @@ def docx_bin_to_html(docx_binary):
                 size_pt = run.font.size.pt
                 run_html = f'<span style="font-size:{size_pt}pt">{run_html}</span>'
 
+            # Process inline images
             for pic in run._element.findall(".//pic:pic", namespaces=pic_namespace):
                 blip = pic.find(".//a:blip", namespaces=a_namespace)
                 if blip is not None:
