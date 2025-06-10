@@ -2,7 +2,6 @@ import os
 import base64
 from io import BytesIO
 from docx import Document
-from docx.shared import Pt
 from django.utils.html import escape
 
 
@@ -98,5 +97,4 @@ def docx_bin_to_html(docx_binary):
 
         p_html += "</p>"
         html += p_html
-
-    return html
+    return ''.join(html)

@@ -1,6 +1,4 @@
 {% extends 'algosite/base.html' %}
-{% load custom_filters %}
-{% load form_tags %}
 {% block title %}{{ topic.title }}{% endblock %}
 
 {% block content %}
@@ -15,9 +13,7 @@
       <i class="fas fa-book-open mr-2"></i>Объяснение
     </h2>
     <div id="explanation" class="p-4 rounded shadow-sm bg-white">
-      <div class="d-flex justify-content-center">
-          <span class="sr-only">Загрузка...</span>
-      </div>
+      {{ topic.explanation|safe }}
     </div>
   </section>
 
@@ -26,9 +22,7 @@
       <i class="fas fa-code mr-2"></i>Пример кода
     </h2>
     <div id="example_code" class="p-4 rounded shadow-sm bg-white">
-      <div class="d-flex justify-content-center">
-          <span class="sr-only">Загрузка...</span>
-      </div>
+      {{ topic.example_code|safe }}
     </div>
   </section>
 
@@ -56,64 +50,9 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
-<script>
-  function base64ToUint8Array(base64) {
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
-  }
-
-  const explanationBase64 = "{{ explanation_blob|b64encode }}";
-  mammoth.convertToHtml({ arrayBuffer: base64ToUint8Array(explanationBase64) })
-    .then(function(result) {
-      const container = document.getElementById("explanation");
-      container.innerHTML = result.value;
-      container.querySelectorAll('pre').forEach(pre => {
-        pre.classList.add('p-3', 'bg-light', 'rounded');
-      });
-    })
-    .catch(function(err) {
-      document.getElementById("explanation").innerHTML = `
-        <div class="alert alert-danger">
-          Ошибка загрузки объяснения
-        </div>
-      `;
-      console.error(err);
-    });
-
-  const exampleCodeBase64 = "{{ example_code_blob|b64encode }}";
-  mammoth.convertToHtml({ arrayBuffer: base64ToUint8Array(exampleCodeBase64) })
-    .then(function(result) {
-      const container = document.getElementById("example_code");
-      container.innerHTML = result.value;
-      container.querySelectorAll('pre').forEach(pre => {
-        pre.classList.add('p-3', 'bg-light', 'rounded');
-      });
-    })
-    .catch(function(err) {
-      document.getElementById("example_code").innerHTML = `
-        <div class="alert alert-danger">
-          Ошибка загрузки примера кода
-        </div>
-      `;
-      console.error(err);
-    });
-</script>
-
 <style>
   .section {
     margin-bottom: 2.5rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #495057;
   }
 
   pre {
