@@ -47,7 +47,7 @@ def docx_bin_to_html(docx_binary):
             right_pt = pf.right_indent.pt
             p_style.append(f"margin-right: {right_pt}pt;")
 
-        # Process alignment
+
         alignment_map = {
             0: "left",
             1: "center",
@@ -57,7 +57,6 @@ def docx_bin_to_html(docx_binary):
         if pf.alignment is not None and pf.alignment in alignment_map:
             p_style.append(f"text-align: {alignment_map[pf.alignment]};")
 
-        # Process leading whitespace (spaces and tabs)
         whitespace_style = process_whitespace_indent(para.text)
         if whitespace_style:
             p_style.append(whitespace_style)
@@ -65,7 +64,7 @@ def docx_bin_to_html(docx_binary):
         style_attr = f' style="{" ".join(p_style)}"' if p_style else ""
         p_html = f'<p{style_attr}>'
 
-        # Process text runs
+
         for run in para.runs:
             text = escape(run.text) if run.text else ""
             run_html = text

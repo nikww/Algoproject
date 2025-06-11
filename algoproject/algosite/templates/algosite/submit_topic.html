@@ -22,7 +22,7 @@
 
         <div class="form-group mb-4">
           <label for="{{ form.title.id_for_label }}" class="font-weight-bold text-secondary">
-            <i class="fas fa-heading mr-2"></i>{{ form.title.label }}
+            <i class="fas fa-heading mr-2"></i>Заголовок
           </label>
           {{ form.title|add_class:"form-control form-control-lg" }}
           <small class="form-text text-muted">Краткое и понятное название темы</small>
@@ -55,17 +55,16 @@
 
         <div class="form-group mb-4">
           <label for="{{ form.exercise_render_code.id_for_label }}" class="font-weight-bold text-secondary">
-            <i class="fab fa-html5 mr-2"></i>{{ form.exercise_render_code.label }}
+            <i class="fab fa-html5 mr-2"></i>Визуальный код
           </label>
           {{ form.exercise_render_code|add_class:"form-control" }}
           <small class="form-text text-muted">HTML-код для отображения упражнения</small>
           {{ form.exercise_render_code.errors }}
         </div>
 
-        <!-- Логический код упражнения -->
         <div class="form-group mb-4">
           <label for="{{ form.exercise_logic_code.id_for_label }}" class="font-weight-bold text-secondary">
-            <i class="fas fa-cogs mr-2"></i>{{ form.exercise_logic_code.label }}
+            <i class="fas fa-cogs mr-2"></i>Логический код
           </label>
           {{ form.exercise_logic_code|add_class:"form-control" }}
           <small class="form-text text-muted">JavaScript-код для логики упражнения</small>
