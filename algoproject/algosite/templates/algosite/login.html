@@ -1,12 +1,12 @@
 {% extends 'algosite/base.html' %}
 {% load form_tags %}
 
-{% block title %}Вход для администрации{% endblock %}
+{% block title %}Вход для модерации{% endblock %}
 
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
   <div class="card p-4 shadow" style="max-width: 350px; width: 100%;">
-    <h1 class="text-center mb-4" style="color: #3b49df;">Вход для администрации</h1>
+    <h1 class="text-center mb-4" style="color: #3b49df;">Вход для модерации</h1>
     <form method="post">
       {% csrf_token %}
       {{ form.non_field_errors }}

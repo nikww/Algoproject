@@ -57,10 +57,10 @@
 
 <style>
   #copyButton {
-  font-size: 1rem; /* Установите размер шрифта */
-  padding: 10px 20px; /* Установите отступы */
-  border-radius: 5px; /* Установите радиус границ */
-  transition: background-color 0.3s; /* Плавный переход для фона */
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 
@@ -72,13 +72,12 @@
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 6px;
-    padding: 16px 16px 16px 56px; /* Keep left padding for line numbers */
-    /* Make container scrollable both vertically and horizontally */
+    padding: 16px 16px 16px 56px;
     overflow-x: auto;
     overflow-y: auto;
     white-space: pre;
     tab-size: 4;
-    max-height: 400px; /* Optional max height to allow vertical scrollbar */
+    max-height: 400px;
   }
 
   /* Code content container - no scroll here */
@@ -121,18 +120,14 @@
     const codeContent = document.createElement('div');
     codeContent.className = 'code-content';
 
-    // Переносим содержимое в новый div
     while (codeBlock.firstChild) {
       codeContent.appendChild(codeBlock.firstChild);
     }
     codeBlock.appendChild(codeContent);
 
-    // Получаем строки кода
     let lines = codeContent.innerText.split('\n');
 
-    // Удаляем все пустые строки
-    lines = lines.filter(line => line.trim() !== '');
-    // Обновляем содержимое без пустых строк
+
     codeContent.innerText = lines.join('\n');
 
     // Создаем контейнер для номеров строк

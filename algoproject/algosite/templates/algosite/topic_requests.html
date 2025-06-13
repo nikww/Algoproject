@@ -20,7 +20,12 @@
 
         <div class="mb-4 p-3 bg-light rounded">
           <h5 class="text-info mb-3">Пример кода</h5>
-          <div>{{ example_code_html_dict|get_item:req.id|default:req.example_code|safe}}</div>
+          <div class="code-block rounded shadow-sm bg-white" id="example_code_{{ req.id }}">
+            {{ example_code_html_dict|get_item:req.id|default:req.example_code|safe }}
+          </div>
+          <button class="btn btn-outline-secondary mt-2 copy-btn" data-target="example_code_{{ req.id }}">
+            <i class="fas fa-copy mr-2"></i>Скопировать код
+          </button>
         </div>
 
         <div class="mb-4">
@@ -92,5 +97,111 @@
   .bg-light {
     background-color: #f8f9fa !important;
   }
+
+  /* Code block styles */
+  .code-block {
+    position: relative;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 16px 16px 16px 56px;
+    overflow-x: auto;
+    overflow-y: auto;
+    white-space: pre;
+    tab-size: 4;
+    max-height: 400px;
+  }
+
+  .code-content {
+    margin-left: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .line-numbers {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 40px;
+    font-size: 0.85rem;
+    color: #999;
+    padding-right: 8px;
+    user-select: none;
+    text-align: right;
+    border-right: 1px solid #dee2e6;
+    line-height: 1.5;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f8f9fa;
+    height: calc(100% - 32px);
+    box-sizing: border-box;
+  }
+
+  .line-number {
+    white-space: nowrap;
+  }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Process all code blocks
+    document.querySelectorAll('.code-block').forEach(function(codeBlock) {
+      const codeContent = document.createElement('div');
+      codeContent.className = 'code-content';
+
+      // Move content to new div
+      while (codeBlock.firstChild) {
+        codeContent.appendChild(codeBlock.firstChild);
+      }
+      codeBlock.appendChild(codeContent);
+
+      // Get lines
+      let lines = codeContent.innerText.split('\n');
+
+      // Remove empty lines at start and end
+      while (lines.length > 0 && lines[0].trim() === '') {
+        lines.shift();
+      }
+      while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
+        lines.pop();
+      }
+
+      codeContent.innerText = lines.join('\n');
+
+      const lineNumbers = document.createElement('div');
+      lineNumbers.className = 'line-numbers';
+
+      for (let i = 1; i <= lines.length; i++) {
+        const lineNumber = document.createElement('div');
+        lineNumber.className = 'line-number';
+        lineNumber.textContent = i;
+        lineNumbers.appendChild(lineNumber);
+      }
+
+      // Insert line numbers
+      codeBlock.insertBefore(lineNumbers, codeContent);
+    });
+
+    // Copy buttons functionality
+    document.querySelectorAll('.copy-btn').forEach(function(button) {
+      button.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const codeBlock = document.getElementById(targetId);
+        const codeContent = codeBlock.querySelector('.code-content');
+
+        navigator.clipboard.writeText(codeContent.innerText).then(() => {
+          const originalText = this.innerHTML;
+          this.innerHTML = '<i class="fas fa-check mr-2"></i>Скопировано!';
+          setTimeout(() => {
+            this.innerHTML = originalText;
+          }, 2000);
+        }).catch(err => {
+          console.error('Ошибка при копировании: ', err);
+        });
+      });
+    });
+  });
+</script>
+
 {% endblock %}
