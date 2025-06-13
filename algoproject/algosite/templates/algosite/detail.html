@@ -28,6 +28,7 @@
     <button id="copyButton" class="btn btn-outline-secondary mt-2">
       <i class="fas fa-copy mr-2"></i>Скопировать код
     </button>
+
   </section>
 
   {% if topic.exercise_render_code %}
@@ -55,6 +56,14 @@
 </div>
 
 <style>
+  #copyButton {
+  font-size: 1rem; /* Установите размер шрифта */
+  padding: 10px 20px; /* Установите отступы */
+  border-radius: 5px; /* Установите радиус границ */
+  transition: background-color 0.3s; /* Плавный переход для фона */
+}
+
+
   /* Updated code block styles */
   .code-block {
     position: relative;
@@ -109,51 +118,49 @@
     const codeBlock = document.getElementById('example_code');
     if (!codeBlock) return;
 
-    // Create container for code content
     const codeContent = document.createElement('div');
     codeContent.className = 'code-content';
 
-    // Move existing content into codeContent div
+    // Переносим содержимое в новый div
     while (codeBlock.firstChild) {
       codeContent.appendChild(codeBlock.firstChild);
     }
     codeBlock.appendChild(codeContent);
 
-    // Get lines count using innerText split on \n
+    // Получаем строки кода
     let lines = codeContent.innerText.split('\n');
 
-    // Remove trailing empty lines
-    while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
-      lines.pop();
-    }
+    // Удаляем все пустые строки
+    lines = lines.filter(line => line.trim() !== '');
+    // Обновляем содержимое без пустых строк
+    codeContent.innerText = lines.join('\n');
 
-    const lineCount = lines.length;
-
-    // Create line numbers container
+    // Создаем контейнер для номеров строк
     const lineNumbers = document.createElement('div');
     lineNumbers.className = 'line-numbers';
 
-    // Append line numbers
-    for (let i = 1; i <= lineCount; i++) {
+    // Добавляем номера строк (по количеству оставшихся строк)
+    for (let i = 1; i <= lines.length; i++) {
       const lineNumber = document.createElement('div');
       lineNumber.className = 'line-number';
       lineNumber.textContent = i;
       lineNumbers.appendChild(lineNumber);
     }
 
-    // Insert line numbers into codeBlock
+    // Вставляем номера строк перед содержимым
     codeBlock.insertBefore(lineNumbers, codeContent);
 
-    // Copy button functionality
+    // Кнопка копирования
     const copyButton = document.getElementById('copyButton');
-    copyButton.addEventListener('click', function() {
-      const codeText = codeContent.innerText;
-      navigator.clipboard.writeText(codeText).then(() => {
-        alert('Код скопирован в буфер обмена!');
-      }).catch(err => {
-        console.error('Ошибка при копировании: ', err);
+    if (copyButton) {
+      copyButton.addEventListener('click', function() {
+        navigator.clipboard.writeText(codeContent.innerText).then(() => {
+          alert('Код скопирован в буфер обмена!');
+        }).catch(err => {
+          console.error('Ошибка при копировании: ', err);
+        });
       });
-    });
+    }
   });
 </script>
 
