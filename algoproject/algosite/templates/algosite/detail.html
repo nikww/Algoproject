@@ -1,3 +1,4 @@
+
 {% extends 'algosite/base.html' %}
 {% block title %}{{ topic.title }}{% endblock %}
 
@@ -21,9 +22,12 @@
     <h2 class="mb-3 text-info">
       <i class="fas fa-code mr-2"></i>Пример кода
     </h2>
-    <div id="example_code" class="p-4 rounded shadow-sm bg-white">
+    <div id="example_code" class="code-block rounded shadow-sm bg-white">
       {{ topic.example_code|safe }}
     </div>
+    <button id="copyButton" class="btn btn-outline-secondary mt-2">
+      <i class="fas fa-copy mr-2"></i>Скопировать код
+    </button>
   </section>
 
   {% if topic.exercise_render_code %}
@@ -51,26 +55,108 @@
 </div>
 
 <style>
-  .section {
-    margin-bottom: 2.5rem;
-  }
-
-  pre {
-    white-space: pre-wrap;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    padding: 1rem;
-    overflow-x: auto;
-  }
-
-  code {
+  /* Updated code block styles */
+  .code-block {
+    position: relative;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.9rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 16px 16px 16px 56px; /* Keep left padding for line numbers */
+    /* Make container scrollable both vertically and horizontally */
+    overflow-x: auto;
+    overflow-y: auto;
+    white-space: pre;
+    tab-size: 4;
+    max-height: 400px; /* Optional max height to allow vertical scrollbar */
   }
 
-  .bg-white {
-    background-color: white;
+  /* Code content container - no scroll here */
+  .code-content {
+    margin-left: 0; /* Remove margin */
+    background: transparent; /* Ensure transparency */
+    /* Remove overflow-x to avoid nested scrollbars */
+    overflow: visible;
+  }
+
+  /* Line numbers column */
+  .line-numbers {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 40px;
+    font-size: 0.85rem;
+    color: #999;
+    padding-right: 8px;
+    user-select: none;
+    text-align: right;
+    border-right: 1px solid #dee2e6;
+    line-height: 1.5;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f8f9fa;
+    height: calc(100% - 32px);
+    box-sizing: border-box;
+  }
+
+  .line-number {
+    white-space: nowrap;
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const codeBlock = document.getElementById('example_code');
+    if (!codeBlock) return;
+
+    // Create container for code content
+    const codeContent = document.createElement('div');
+    codeContent.className = 'code-content';
+
+    // Move existing content into codeContent div
+    while (codeBlock.firstChild) {
+      codeContent.appendChild(codeBlock.firstChild);
+    }
+    codeBlock.appendChild(codeContent);
+
+    // Get lines count using innerText split on \n
+    let lines = codeContent.innerText.split('\n');
+
+    // Remove trailing empty lines
+    while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
+      lines.pop();
+    }
+
+    const lineCount = lines.length;
+
+    // Create line numbers container
+    const lineNumbers = document.createElement('div');
+    lineNumbers.className = 'line-numbers';
+
+    // Append line numbers
+    for (let i = 1; i <= lineCount; i++) {
+      const lineNumber = document.createElement('div');
+      lineNumber.className = 'line-number';
+      lineNumber.textContent = i;
+      lineNumbers.appendChild(lineNumber);
+    }
+
+    // Insert line numbers into codeBlock
+    codeBlock.insertBefore(lineNumbers, codeContent);
+
+    // Copy button functionality
+    const copyButton = document.getElementById('copyButton');
+    copyButton.addEventListener('click', function() {
+      const codeText = codeContent.innerText;
+      navigator.clipboard.writeText(codeText).then(() => {
+        alert('Код скопирован в буфер обмена!');
+      }).catch(err => {
+        console.error('Ошибка при копировании: ', err);
+      });
+    });
+  });
+</script>
+
 {% endblock %}
+
+
