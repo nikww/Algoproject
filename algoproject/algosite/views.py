@@ -6,7 +6,6 @@ from .models import Topic, TopicRequest
 from .forms import TopicRequestForm
 
 
-
 def submit_topic(request):
     if request.user.is_authenticated:
         return redirect('index')
@@ -14,15 +13,27 @@ def submit_topic(request):
     message = ''
     if request.method == 'POST':
         form = TopicRequestForm(request.POST, request.FILES)
-        if form.is_valid():
+        file_errors = []
+
+        explanation_file = request.FILES.get('explanation_file')
+        if explanation_file and not explanation_file.name.endswith('.docx'):
+            file_errors.append('Файл объяснения должен быть в формате .docx')
+
+        example_code_file = request.FILES.get('example_code_file')
+        if example_code_file and not example_code_file.name.endswith('.docx'):
+            file_errors.append('Файл с примером кода должен быть в формате .docx')
+
+        if file_errors:
+            for error in file_errors:
+                form.add_error(None, error)
+            message = 'Пожалуйста, исправьте ошибки в форме.'
+        elif form.is_valid():
             obj = form.save(commit=False)
 
-            explanation_file = request.FILES.get('explanation_file')
-            if explanation_file.name.endswith('.docx'):
+            if explanation_file:
                 obj.explanation = docx_bin_to_html(explanation_file.read())
 
-            example_code_file = request.FILES.get('example_code_file')
-            if example_code_file.name.endswith('.docx'):
+            if example_code_file:
                 obj.example_code = docx_bin_to_html(example_code_file.read())
 
             obj.user = None
