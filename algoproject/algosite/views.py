@@ -104,7 +104,7 @@ def delete_topic(request, topic_id):
         topic = get_object_or_404(Topic, id= topic_id)
         topic.delete()
     return redirect('index')
-
+#Ден доделай
 def index(request):
     topics = Topic.objects.all()
     return render(request, 'algosite/index.html', {

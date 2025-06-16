@@ -145,21 +145,17 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Process all code blocks
     document.querySelectorAll('.code-block').forEach(function(codeBlock) {
       const codeContent = document.createElement('div');
       codeContent.className = 'code-content';
 
-      // Move content to new div
       while (codeBlock.firstChild) {
         codeContent.appendChild(codeBlock.firstChild);
       }
       codeBlock.appendChild(codeContent);
 
-      // Get lines
       let lines = codeContent.innerText.split('\n');
 
-      // Remove empty lines at start and end
       while (lines.length > 0 && lines[0].trim() === '') {
         lines.shift();
       }
@@ -179,7 +175,6 @@
         lineNumbers.appendChild(lineNumber);
       }
 
-      // Insert line numbers
       codeBlock.insertBefore(lineNumbers, codeContent);
     });
 

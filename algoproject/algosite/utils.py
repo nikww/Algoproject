@@ -83,7 +83,6 @@ def docx_bin_to_html(docx_binary):
                 size_pt = run.font.size.pt
                 run_html = f'<span style="font-size:{size_pt}pt">{run_html}</span>'
 
-            # Process inline images
             for pic in run._element.findall(".//pic:pic", namespaces=pic_namespace):
                 blip = pic.find(".//a:blip", namespaces=a_namespace)
                 if blip is not None:
